@@ -1,5 +1,5 @@
 import HeaderBox from '@/components/HeaderBox'
-// import RecentTransactions from '@/components/RecentTransactions';
+import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
@@ -14,7 +14,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
   const { id, page } = await searchParams;
 
   // Parse page param safely if you need it later
-  // const currentPage = Number(page) || 1;
+  const currentPage = Number(page) || 1;
 
   const loggedIn = await getLoggedInUser();
 
@@ -63,14 +63,14 @@ const Home = async ({ searchParams }: SearchParamProps) => {
         </header>
 
         {/* Uncomment and pass currentPage once you handle page param correctly */}
-        {/* 
+        
         <RecentTransactions
           accounts={accountsData}
           transactions={account?.transactions}
           appwriteItemId={appwriteItemId}
           page={currentPage}
         /> 
-        */}
+       
       </div>
 
       <RightSidebar
