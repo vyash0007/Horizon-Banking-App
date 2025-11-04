@@ -6,7 +6,7 @@ import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 
 interface SearchParamProps {
-  searchParams: Record<string, any>; // Adjust type as needed
+  searchParams: Promise<{ id?: string; page?: string; [key: string]: string | string[] | undefined }>;
 }
 
 const Home = async ({ searchParams }: SearchParamProps) => {
@@ -69,6 +69,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
           transactions={account?.transactions}
           appwriteItemId={appwriteItemId}
           page={currentPage}
+          user={loggedIn}
         /> 
        
       </div>

@@ -5,9 +5,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import Image from 'next/image'
@@ -19,6 +16,7 @@ import { sidebarLinks } from '@/constants'
 import { cn } from '@/lib/utils'
 import Footer from './Footer'
 import PlaidLink from './PlaidLink'
+import { MobileNavProps } from '@/types'
 
 const MobileNav = ({ user }: MobileNavProps) => {
   const pathname = usePathname()
@@ -44,18 +42,19 @@ const MobileNav = ({ user }: MobileNavProps) => {
           <div className="mobilenav-sheet">
             <SheetClose asChild>
               <nav className="flex h-full flex-col gap-6 pt-16">
-                {sidebarLinks.map((item: { route: string | UrlObject; label: boolean | React.Key | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; imgURL: string | StaticImport }) => {
-                  const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`)
+                {sidebarLinks.map((item: { route: string | UrlObject; label: React.ReactNode; imgURL: string | StaticImport }) => {
+                  const routeStr = typeof item.route === 'string' ? item.route : (item.route as UrlObject).pathname ?? ''
+                  const isActive = pathname === routeStr || (routeStr && pathname.startsWith(`${routeStr}/`))
 
                   return (
-                    <SheetClose asChild key={item.route}>
-                    <Link href={item.route} key={item.label}
+                    <SheetClose asChild key={routeStr || String(item.label)}>
+                    <Link href={item.route}
                       className={cn('mobilenac-sheet_close w-full', { 'bg-bank-gradient': isActive })}
                     >
                       
                         <Image
                           src={item.imgURL}
-                          alt={item.label}
+                          alt={String(item.label)}
                           width={20}
                           height={20}
                           className={cn({

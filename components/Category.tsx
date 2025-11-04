@@ -4,13 +4,14 @@ import { topCategoryStyles } from "@/constants";
 import { cn } from "@/lib/utils";
 
 import { Progress } from "./ui/progress";
+import { CategoryProps } from "@/types";
 
 const Category = ({ category }: CategoryProps) => {
   const {
     bg,
     circleBg,
     text: { main, count },
-    progress: { bg: progressBg, indicator },
+    progress: { bg: progressBg },
     icon,
   } = topCategoryStyles[category.name as keyof typeof topCategoryStyles] ||
   topCategoryStyles.default;
@@ -28,7 +29,7 @@ const Category = ({ category }: CategoryProps) => {
         <Progress
           value={(category.count / category.totalCount) * 100}
           className={cn("h-2 w-full", progressBg)}
-          indicatorClassName={cn("h-2 w-full", indicator)}
+          // Removed the indicatorClassName prop as it is not supported
         />
       </div>
     </div>

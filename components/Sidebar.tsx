@@ -8,6 +8,7 @@ import { sidebarLinks } from '@/constants'
 import { usePathname } from 'next/navigation'
 import Footer from './Footer'
 import PlaidLink from './PlaidLink';
+import { SiderbarProps } from '@/types'
 
 const Sidebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();

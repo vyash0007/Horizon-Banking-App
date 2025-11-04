@@ -6,13 +6,20 @@ import React from 'react'
 
 const Transfer = async () => {
   const loggedIn = await getLoggedInUser();
+
+  if (!loggedIn) {
+    return <section>Please log in to access payment transfer.</section>;
+  }
+
   const accounts = await getAccounts({ 
     userId: loggedIn.$id 
   })
 
-  if(!accounts) return;
+  if(!accounts || !accounts.data || accounts.data.length === 0) {
+    return <section>No accounts found. Please add a bank account first.</section>;
+  }
   
-  const accountsData = accounts?.data;
+  const accountsData = accounts.data;
 
   return (
     <section className="payment-transfer">

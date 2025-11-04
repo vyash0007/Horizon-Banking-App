@@ -6,37 +6,61 @@ import { getLoggedInUser } from '@/lib/actions/user.actions';
 import { formatAmount } from '@/lib/utils';
 import React from 'react'
 
-const TransactionHistory = async ({ searchParams: { id, page }}:SearchParamProps) => {
+async function TransactionHistory({
+  params, searchParams,
+}: {
+  params: Promise<{ [key: string]: string; }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined; }>;
+}): Promise<React.JSX.Element> {
+  // Await params but don't assign it since we don't use it
+  await params;
+  const resolvedSearchParams = await searchParams;
+  
+  const { id, page } = resolvedSearchParams;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
-  const accounts = await getAccounts({ 
-    userId: loggedIn.$id 
-  })
 
-  if(!accounts) return;
-  
-  const accountsData = accounts?.data;
+  if (!loggedIn) {
+    return <section>Please log in to access transaction history.</section>;
+  }
+
+  const accounts = await getAccounts({
+    userId: loggedIn.$id
+  });
+
+  if (!accounts || !accounts.data || accounts.data.length === 0) {
+    return <section>No accounts found.</section>;
+  }
+
+  const accountsData = accounts.data;
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
 
-  const account = await getAccount({ appwriteItemId })
+  if (!appwriteItemId) {
+    return <section>No valid account selected.</section>;
+  }
 
+  const account = await getAccount({ appwriteItemId });
 
-const rowsPerPage = 10;
-const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
+  if (!account) {
+    return <section>Could not load account details.</section>;
+  }
 
-const indexOfLastTransaction = currentPage * rowsPerPage;
-const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
+  const rowsPerPage = 10;
+  const totalPages = Math.ceil((account?.transactions?.length || 0) / rowsPerPage);
 
-const currentTransactions = account?.transactions.slice(
-  indexOfFirstTransaction, indexOfLastTransaction
-)
+  const indexOfLastTransaction = currentPage * rowsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
+
+  const currentTransactions = account?.transactions?.slice(
+    indexOfFirstTransaction, indexOfLastTransaction
+  ) || [];
+  
   return (
     <div className="transactions">
       <div className="transactions-header">
-        <HeaderBox 
+        <HeaderBox
           title="Transaction History"
-          subtext="See your bank details and transactions."
-        />
+          subtext="See your bank details and transactions." />
       </div>
 
       <div className="space-y-6">
@@ -50,7 +74,7 @@ const currentTransactions = account?.transactions.slice(
               ●●●● ●●●● ●●●● {account?.data.mask}
             </p>
           </div>
-          
+
           <div className='transactions-account-balance'>
             <p className="text-14">Current balance</p>
             <p className="text-24 text-center font-bold">{formatAmount(account?.data.currentBalance)}</p>
@@ -58,18 +82,17 @@ const currentTransactions = account?.transactions.slice(
         </div>
 
         <section className="flex w-full flex-col gap-6">
-          <TransactionsTable 
-            transactions={currentTransactions}
-          />
-            {totalPages > 1 && (
-              <div className="my-4 w-full">
-                <Pagination totalPages={totalPages} page={currentPage} />
-              </div>
-            )}
+          <TransactionsTable
+            transactions={currentTransactions} />
+          {totalPages > 1 && (
+            <div className="my-4 w-full">
+              <Pagination totalPages={totalPages} page={currentPage} />
+            </div>
+          )}
         </section>
       </div>
     </div>
-  )
+  );
 }
 
 export default TransactionHistory

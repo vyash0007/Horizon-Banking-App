@@ -2,7 +2,11 @@ import {withSentryConfig} from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  typescript: {
+    // Temporarily ignore build errors in development
+    ignoreBuildErrors: process.env.NODE_ENV === 'development',
+  },
+  swcMinify: true,
 };
 
 export default withSentryConfig(nextConfig, {

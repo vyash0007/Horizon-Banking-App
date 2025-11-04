@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 
+import { NextPage } from 'next';
+
 declare type SearchParamProps = {
-  params: { [key: string]: string };
+  params: Record<string, string>;
   searchParams: { [key: string]: string | string[] | undefined };
-};
+}
 
 // ========================================
 
@@ -51,6 +53,9 @@ declare type NewUserParams = {
 };
 
 declare type Account = {
+  userId: string;
+  fundingSourceUrl: string;
+  bankId: string;
   id: string;
   availableBalance: number;
   currentBalance: number;
@@ -62,6 +67,8 @@ declare type Account = {
   subtype: string;
   appwriteItemId: string;
   shareableId: string;
+  needsReauth?: boolean;
+  accessToken?: string;
 };
 
 declare type Transaction = {
@@ -91,6 +98,8 @@ declare type Bank = {
   fundingSourceUrl: string;
   userId: string;
   shareableId: string;
+  status?: 'valid' | 'invalid' | 'requires_reauth';
+  lastUpdated?: string;
 };
 
 declare type AccountTypes =
@@ -163,6 +172,8 @@ declare interface BankInfoProps {
   account: Account;
   appwriteItemId?: string;
   type: "full" | "card";
+  user?: User;
+  onReauth?: (account: Account) => void;
 }
 
 declare interface HeaderBoxProps {
@@ -191,8 +202,10 @@ declare interface PaginationProps {
 
 declare interface PlaidLinkProps {
   user: User;
-  variant?: "primary" | "ghost";
+  variant?: "primary" | "ghost" | "default";
   dwollaCustomerId?: string;
+  accessToken?: string;
+  onReauthSuccess?: () => void;
 }
 
 // declare type User = sdk.Models.Document & {
@@ -245,6 +258,8 @@ declare interface RecentTransactionsProps {
   transactions: Transaction[];
   appwriteItemId: string;
   page: number;
+  user?: User;
+  onReauth?: (account: Account) => void;
 }
 
 declare interface TransactionHistoryTableProps {
@@ -293,7 +308,7 @@ declare interface CreateFundingSourceOptions {
   customerId: string; // Dwolla Customer ID
   fundingSourceName: string; // Dwolla Funding Source Name
   plaidToken: string; // Plaid Account Processor Token
-  _links: object; // Dwolla On Demand Authorization Link
+  _links?: object; // Dwolla On Demand Authorization Link (optional)
 }
 
 declare interface CreateTransactionProps {

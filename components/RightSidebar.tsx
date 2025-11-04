@@ -5,6 +5,7 @@ import Image from 'next/image'
 import BankCard from './BankCard'
 import { countTransactionCategories } from '@/lib/utils'
 import Category from './Category'
+import { CategoryCount, RightSidebarProps } from '@/types'
 
 const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
     const categories: CategoryCount[] = countTransactionCategories(transactions);
@@ -41,14 +42,14 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
                     </Link>
                 </div>
                 {banks?.length > 0 && (
-                    <div className='relative flex flex-1 flex-col flex-center justify-center text-white gap-5'>
-                        <div className='relative z-10'>
+                    <div className='relative flex flex-1 flex-col flex-center justify-center text-white gap-5'>                        <div className='relative z-10'>
                             {user && (
                                 <BankCard
                                     key={banks[0].$id}
                                     account={banks[0]}
                                     userName={`${user.firstName} ${user.lastName}`}
                                     showBalance={false}
+                                    user={user}
                                 />
                             )}
                         </div>
@@ -60,6 +61,7 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
                                         account={banks[1]}
                                         userName={`${user.firstName} ${user.lastName} `}
                                         showBalance={false}
+                                        user={user}
                                     />
                                 )}
                             </div>
@@ -71,7 +73,7 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
                     <h2 className="header-2">Top categories</h2>
 
                     <div className='space-y-5'>
-                        {categories.map((category, index) => (
+                        {categories.map((category) => (
                             <Category key={category.name} category={category} />
                         ))}
                     </div>

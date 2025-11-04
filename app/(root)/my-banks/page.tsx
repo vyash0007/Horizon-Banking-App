@@ -2,13 +2,23 @@ import BankCard from '@/components/BankCard';
 import HeaderBox from '@/components/HeaderBox'
 import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
+import { Account } from '@/types';
 import React from 'react'
 
 const MyBanks = async () => {
   const loggedIn = await getLoggedInUser();
+  
+  if (!loggedIn) {
+    return <section>Please log in to access your account.</section>;
+  }
+
   const accounts = await getAccounts({ 
     userId: loggedIn.$id 
   })
+
+  if (!accounts || !accounts.data || accounts.data.length === 0) {
+    return <section>No bank accounts found.</section>;
+  }
 
   return (
     <section className='flex'>
@@ -21,13 +31,13 @@ const MyBanks = async () => {
         <div className="space-y-4">
           <h2 className="header-2">
             Your cards
-          </h2>
-          <div className="flex flex-wrap gap-6">
-            {accounts && accounts.data.map((a: Account) => (
+          </h2>          <div className="flex flex-wrap gap-6">
+            {accounts.data.map((a: Account) => (
               <BankCard 
-                key={accounts.id}
+                key={a.appwriteItemId}
                 account={a}
-                userName={loggedIn?.firstName}
+                userName={loggedIn.firstName}
+                user={loggedIn}
               />
             ))}
           </div>
